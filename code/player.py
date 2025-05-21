@@ -37,7 +37,7 @@ class Player(pygame.sprite.Sprite):
                         self.rect.right = sprite.rect.left
                     if self.direction.x < 0:
                         self.rect.left = sprite.rect.right
-                if direction == 'vertical':
+                else:
                     if self.direction.y > 0:
                         self.rect.bottom = sprite.rect.top
                     if self.direction.y < 0:
