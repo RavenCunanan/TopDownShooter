@@ -14,7 +14,7 @@ class Game:
 
         # groups
         self.all_sprites = pygame.sprite.Group()
-        self.collision_sprites = pygame.sprite.Group
+        self.collision_sprites = pygame.sprite.Group()
 
         # sprites
         self.player = Player((400,300), self.all_sprites, self.collision_sprites)
