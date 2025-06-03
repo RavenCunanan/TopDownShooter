@@ -61,8 +61,7 @@ class Player(pygame.sprite.Sprite):
                     if self.direction.y < 0:
                         self.hitbox_rect.top = sprite.rect.bottom
 
-
-    def animate(self,dt):
+    def animate(self, dt):
         # get state
         if self.direction.x < 0:
             self.state = 'left'
@@ -73,10 +72,12 @@ class Player(pygame.sprite.Sprite):
         elif self.direction.y > 0:
             self.state = 'down'
 
-        #animate
-        self.frame_index += dt * 5
-        self.image = self.frames[self.state][int(self.frame_index) % len(self.frames[self.state])]
+        # animate only if moving
+        if self.direction.magnitude() != 0:
+            self.frame_index += 5 * dt
 
+        # update image
+        self.image = self.frames[self.state][int(self.frame_index) % len(self.frames[self.state])]
 
     def update(self, dt):
         self.input()
