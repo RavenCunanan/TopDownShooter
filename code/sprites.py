@@ -32,7 +32,6 @@ class Gun(pygame.sprite.Sprite):
         mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
         player_pos = pygame.Vector2(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
         self.player_direction= (mouse_pos - player_pos).normalize()
-        print(self.player_direction)
 
     def rotate_gun(self):
         angle = degrees(atan2(self.player_direction.x, self.player_direction.y)) - 90
@@ -47,3 +46,19 @@ class Gun(pygame.sprite.Sprite):
         self.rotate_gun()
         self.rect.center = self.player.rect.center + self.player_direction * self.distance
 
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, surf, pos, direction, groups):
+        super().__init__(groups)
+        self.image = surf
+        self.rect = self.image.get_rect(center=pos)
+        self.spawn_time = pygame.time.get_ticks()
+        self.liftime = 1000
+
+        self.direction = direction.normalize()
+        self.speed = 1200
+    
+    def update(self, dt):
+        self.rect.center += self.direction * self.speed * dt
+        
+        if pygame.time.get_ticks() - self.spawn_time >= self.liftime:
+            self.kill()
