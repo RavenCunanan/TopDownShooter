@@ -21,11 +21,10 @@ class Player(pygame.sprite.Sprite):
             for folder_path, sub_folders, file_names in walk(join('images', 'player', state)):
                 if file_names:
                     for file_name in sorted(file_names, key=lambda name: int(name.split('.')[0])):
-                        full_path = join(folder_path, file_name)
-                        print(full_path)
+                        full_path = join(folder_path, file_name)                        
                         surf = pygame.image.load(full_path).convert_alpha()
                         self.frames[state].append(surf)
-        print(self.frames)        
+              
            
 
     def input(self):
