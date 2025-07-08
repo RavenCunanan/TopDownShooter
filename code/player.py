@@ -13,6 +13,15 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.Vector2(0,0)
         self.speed = 500
         self.collision_sprites = collision_sprites
+
+        # health
+        self.health = 3
+        self.alive = True
+
+        # invincibility
+        self.invincible = False
+        self.hit_time = 0
+        self.invincibility_duration = 1000  # milliseconds
     
     def load_images(self):
         self.frames ={'left': [], 'right': [], 'up': [], 'down': []}
@@ -25,7 +34,15 @@ class Player(pygame.sprite.Sprite):
                         surf = pygame.image.load(full_path).convert_alpha()
                         self.frames[state].append(surf)
               
-           
+    def take_damage(self):
+        current_time = pygame.time.get_ticks()
+        if not self.invincible:
+            self.health -= 1
+            print(f'Player health: {self.health}')
+            self.invincible = True
+            self.hit_time = current_time
+            if self.health <= 0:
+                self.alive = False       
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -82,3 +99,7 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.move(dt)
         self.animate(dt)
+        if self.invincible:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.hit_time >= self.invincibility_duration:
+                self.invincible = False
