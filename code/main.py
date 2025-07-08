@@ -66,8 +66,8 @@ class Game:
         
     def gun_timer(self):
         if not self.can_shoot:
-            curent_time = pygame.time.get_ticks()
-            if curent_time - self.shoot_time >= self.gun_cooldown:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.shoot_time >= self.gun_cooldown:
                 self.can_shoot = True
 
     def setup(self):
