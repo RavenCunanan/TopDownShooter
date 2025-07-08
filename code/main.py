@@ -91,7 +91,9 @@ class Game:
 
     def player_collision(self):
        if pygame.sprite.spritecollide(self.player, self.enemy_sprites, False, pygame.sprite.collide_mask):
-           self.running = False
+           self.player.take_damage()
+           if not self.player.alive:
+            self.running = False
 
     def bullet_collision(self):
         if self.bullet_sprites:
