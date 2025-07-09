@@ -45,6 +45,7 @@ class Game:
 
     def load_images(self):
         self.bullet_surf = pygame.image.load(join('images', 'gun', 'bullet.png')).convert_alpha()
+        self.heart_image = pygame.image.load(join('images', 'ui', 'heart.png')).convert_alpha()
 
         folders = list(walk(join('images', 'enemies')))[0][1]
         self.enemy_frames = {}
@@ -127,6 +128,9 @@ class Game:
             # draw
             self.display_surface.fill('black')
             self.all_sprites.draw(self.player.rect.center)
+            for i in range(self.player.health):
+                x = 10 + i * (self.heart_image.get_width() + 5)
+                self.display_surface.blit(self.heart_image, (x, 10))
             pygame.display.update()
 
         pygame.quit()
