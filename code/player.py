@@ -38,7 +38,6 @@ class Player(pygame.sprite.Sprite):
         current_time = pygame.time.get_ticks()
         if not self.invincible:
             self.health -= 1
-            print(f'Player health: {self.health}')
             self.invincible = True
             self.hit_time = current_time
             if self.health <= 0:
@@ -103,3 +102,12 @@ class Player(pygame.sprite.Sprite):
             current_time = pygame.time.get_ticks()
             if current_time - self.hit_time >= self.invincibility_duration:
                 self.invincible = False
+                self.image.set_alpha(255)  # Reset alpha to fully visible
+            else:
+                # Flash effect
+                if (current_time // 100) % 2 == 0:
+                    self.image.set_alpha(100) # transparent               
+                else:
+                    self.image.set_alpha(255) # fully visible
+        else:
+            self.image.set_alpha(255) # Reset alpha to fully visible
