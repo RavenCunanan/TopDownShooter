@@ -13,6 +13,10 @@ class Game:
         pygame.display.set_caption('Top Down Shooter')
         self.clock = pygame.time.Clock()
         self.running = True
+        self.score = 0
+        self.final_score = 0
+        self.start_time = pygame.time.get_ticks()
+        self.game_active = True
         
         # groups
         self.all_sprites = AllSprites()
@@ -94,7 +98,10 @@ class Game:
        if pygame.sprite.spritecollide(self.player, self.enemy_sprites, False, pygame.sprite.collide_mask):
            self.player.take_damage()
            if not self.player.alive:
-            self.running = False
+               current_time = pygame.time.get_ticks()
+               time_elapsed = (current_time - self.start_time) // 1000
+               self.final_score = time_elapsed + self.score
+               self.game_active = False
 
     def bullet_collision(self):
         if self.bullet_sprites:
@@ -104,36 +111,81 @@ class Game:
                     self.impact_sound.play()
                     for sprite in collision_sprites:
                         sprite.destroy()
+                        self.score += 5
                     bullet.kill()
 
     def run(self):
         while self.running:
-            # dt
-            dt = self.clock.tick() / 1000
-
-            # event loop
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                if event.type == self.enemy_event:
-                    Enemy(choice(self.spawn_positions), choice(list(self.enemy_frames.values())), (self.all_sprites, self.enemy_sprites), self.player, self.collision_sprites)
-            
-            # update
-            self.gun_timer()
-            self.input()
-            self.all_sprites.update(dt)
-            self.bullet_collision()
-            self.player_collision()
-
-            # draw
-            self.display_surface.fill('black')
-            self.all_sprites.draw(self.player.rect.center)
-            for i in range(self.player.health):
-                x = 10 + i * (self.heart_image.get_width() + 5)
-                self.display_surface.blit(self.heart_image, (x, 10))
-            pygame.display.update()
-
+            if self.game_active:
+                self.run_gameplay()
+            else:
+                self.run_game_over()
+        
         pygame.quit()
+    
+    def run_gameplay(self):
+        dt = self.clock.tick() / 1000
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == self.enemy_event:
+                Enemy(choice(self.spawn_positions), choice(list(self.enemy_frames.values())),
+                    (self.all_sprites, self.enemy_sprites), self.player, self.collision_sprites)
+
+        self.gun_timer()
+        self.input()
+        self.all_sprites.update(dt)
+        self.bullet_collision()
+        self.player_collision()
+
+        current_time = pygame.time.get_ticks()
+        time_elapsed = (current_time - self.start_time) // 1000
+        total_score = time_elapsed + self.score
+
+        self.display_surface.fill('black')
+        self.all_sprites.draw(self.player.rect.center)
+
+        font = pygame.font.Font(None, 36)
+        score_surf = font.render(f'Score: {total_score}', True, 'white')
+        self.display_surface.blit(score_surf, (10, 50))
+
+        for i in range(self.player.health):
+            x = 10 + i * (self.heart_image.get_width() + 5)
+            self.display_surface.blit(self.heart_image, (x, 10))
+
+        pygame.display.update()
+
+
+    def run_game_over(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                self.restart_game()
+        
+        self.display_surface.fill('black')
+
+        # main Game Over text
+        font = pygame.font.Font(None, 64)
+        game_over_text = font.render('Game Over', True, 'red')
+        self.display_surface.blit(game_over_text, game_over_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 50)))
+
+        #score text
+        font_score = pygame.font.Font(None, 48)
+        score_text = font_score.render(f'Final Score: {self.final_score}', True, 'white')
+        self.display_surface.blit(score_text, score_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2)))
+
+        # restart instruction
+        font_small = pygame.font.Font(None, 36)
+        restart_text = font_small.render('Press R to Restart', True, 'white')
+        self.display_surface.blit(restart_text, restart_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50)))
+
+        pygame.display.update()
+                
+    def restart_game(self):
+        self.music.stop()
+        self.__init__() # Reinitialize the game      
 
 if __name__ == "__main__":    
     game = Game()
