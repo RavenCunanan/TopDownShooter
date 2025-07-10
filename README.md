@@ -24,3 +24,8 @@ A simple arcade-style top down shooter built with Pygame. Survive as long as you
 
 ```bash
 python main.py
+```
+
+
+<img width="1276" height="746" alt="11" src="https://github.com/user-attachments/assets/ebe3322d-5d4a-4cf7-9543-e80c4ebfb9e2" />
+
